@@ -4,7 +4,7 @@ import joblib
 
 app = Flask(__name__)
 
-model = joblib.load("SuperKart_Sales_Model.pkl")
+model = joblib.load("SuperKart_Sales_Forecasting_Model.pkl")
 
 @app.route("/")
 def home():
