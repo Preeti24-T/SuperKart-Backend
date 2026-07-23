@@ -4,7 +4,7 @@ import requests
 import json
 
 # --- Configuration ---
-# Replace with your actual deployed model URL
+
 MODEL_API_URL = "https://probable-parakeet-6vvjpx56q7v5fj9v-7860.app.github.dev/v1/customer"
 
 st.set_page_config(
