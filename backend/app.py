@@ -1,17 +1,30 @@
-from flask import Flask, request, jsonify
-import pandas as pd
-import joblib
 
+import os
+import joblib
+import pandas as pd
+from flask import Flask, request, jsonify
+
+# Initialize Flask application
 app = Flask(__name__)
 
-model = joblib.load("SuperKart_Sales_Forecasting_Model.pkl")
+# Load trained model
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH = os.path.join(BASE_DIR, "SuperKart_Sales_Forecasting_Model.pkl")
 
-@app.route("/")
+model = joblib.load(MODEL_PATH)
+
+
+# Home Page
+@app.route("/", methods=["GET"])
 def home():
-    return "Welcome to SuperKart Sales Prediction API"
+    return "Welcome to SuperKart Sales Forecasting API"
 
-@app.route("/v1/customer", methods=["POST"])
-def predict():
+
+# -----------------------------
+# Online Prediction
+# -----------------------------
+@app.route("/v1/sales", methods=["POST"])
+def predict_sales():
 
     data = request.get_json()
 
@@ -19,24 +32,34 @@ def predict():
 
     prediction = model.predict(input_df)[0]
 
-    return jsonify({
-        "Predicted Product Store Sales": round(float(prediction),2)
-    })
+    return jsonify(
+        {
+            "Predicted Sales": round(float(prediction),2)
+        }
+    )
 
 
-@app.route("/v1/customerbatch", methods=["POST"])
-def batch_predict():
+# -----------------------------
+# Batch Prediction
+# -----------------------------
+@app.route("/v1/salesbatch", methods=["POST"])
+def predict_sales_batch():
 
     file = request.files["file"]
 
-    df = pd.read_csv(file)
+    batch_data = pd.read_csv(file)
 
-    predictions = model.predict(df)
+    predictions = model.predict(batch_data)
 
-    df["Predicted Sales"] = predictions
+    output = {}
 
-    return df["Predicted Sales"].to_json()
+    for i, pred in enumerate(predictions):
+
+        output[str(i)] = round(float(pred),2)
+
+    return jsonify(output)
 
 
-if __name__=="__main__":
-    app.run(host="0.0.0.0",port=7860)
+if __name__ == "__main__":
+
+    app.run(host="0.0.0.0", port=7860)
