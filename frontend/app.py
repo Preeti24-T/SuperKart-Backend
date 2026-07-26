@@ -3,8 +3,8 @@ import streamlit as st
 import pandas as pd
 import requests
 
-# Replace this with your GitHub Codespaces forwarded URL
-BACKEND_URL = "https://YOUR-FORWARDED-URL-7860.app.github.dev"
+
+BACKEND_URL = "https://probable-parakeet-6vvjpx56q7v5fj9v-7860.app.github.dev/"
 
 st.title("SuperKart Sales Forecasting")
 
